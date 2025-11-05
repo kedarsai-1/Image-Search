@@ -30,13 +30,32 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.serializeUser((user,done)=>done(null,user._id));
 passport.deserializeUser(async (id,done)=>{ const u = await User.findById(id); done(null,u); });
-passport.use(new GoogleStrategy({clientID:process.env.GOOGLE_CLIENT_ID,clientSecret:process.env.GOOGLE_CLIENT_SECRET,callbackURL:`http://localhost:5001/auth/google/callback`},async (accessToken,refreshToken,profile,done)=>{
-  let u = await User.findOne({providerId:profile.id,provider:'google'});
-  if(!u) u = await User.create({providerId:profile.id,provider:'google',displayName:profile.displayName,email:(profile.emails&&profile.emails[0]&&profile.emails[0].value)||''});
-  done(null,u);
-}));
-passport.use(new GitHubStrategy({clientID:process.env.GITHUB_CLIENT_ID,clientSecret:process.env.GITHUB_CLIENT_SECRET,callbackURL:`http://localhost:5001/auth/github/callback`},async (accessToken,refreshToken,profile,done)=>{
-  let u = await User.findOne({providerId:profile.id,provider:'github'});
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:5001/auth/google/callback"
+
+}, async (accessToken, refreshToken, profile, done) => {  
+  try {
+    let u = await User.findOne({ providerId: profile.id, provider: 'google' })
+    if (!u) {
+      u = await User.create({ providerId: profile.id, provider: 'google', displayName: profile.displayName, email: (profile.emails && profile.emails[0] && profile.emails[0].value) || '' })
+    }
+    return done(null, u)
+  } catch (err) {
+    console.error('Google strategy error:', err)
+    return done(err)
+  }
+}))
+
+passport.use(new GitHubStrategy(
+  {
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:5001/auth/github/callback"
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    let u = await User.findOne({ providerId: profile.id, provider: 'github' });
   if(!u) u = await User.create({providerId:profile.id,provider:'github',displayName:profile.displayName||profile.username,email:(profile.emails&&profile.emails[0]&&profile.emails[0].value)||''});
   done(null,u);
 }));

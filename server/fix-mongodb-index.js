@@ -30,6 +30,22 @@ async function fixMongoDBIndex() {
       console.log('email_1 index not found or already dropped');
     }
     
+    // Drop the problematic Password index if it exists
+    try {
+      await db.collection('users').dropIndex('Password_1');
+      console.log('Dropped Password_1 index');
+    } catch (err) {
+      console.log('Password_1 index not found or already dropped');
+    }
+    
+    // Drop the FirstName_LastName index if it exists (to avoid potential conflicts)
+    try {
+      await db.collection('users').dropIndex('FirstName_1_LastName_1');
+      console.log('Dropped FirstName_1_LastName_1 index');
+    } catch (err) {
+      console.log('FirstName_1_LastName_1 index not found or already dropped');
+    }
+    
     // Create a new index on email field if you want unique emails
     // Uncomment the line below if you want unique email constraint
     // await db.collection('users').createIndex({ email: 1 }, { unique: true, sparse: true });
