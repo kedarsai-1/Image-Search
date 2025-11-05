@@ -56,9 +56,10 @@ passport.use(new GitHubStrategy(
   },
   async (accessToken, refreshToken, profile, done) => {
     let u = await User.findOne({ providerId: profile.id, provider: 'github' });
-  if(!u) u = await User.create({providerId:profile.id,provider:'github',displayName:profile.displayName||profile.username,email:(profile.emails&&profile.emails[0]&&profile.emails[0].value)||''});
-  done(null,u);
-}));
+    if(!u) u = await User.create({providerId:profile.id,provider:'github',displayName:profile.displayName||profile.username,email:(profile.emails&&profile.emails[0]&&profile.emails[0].value)||''});
+    done(null,u);
+  }
+));
 
 app.use('/auth', authRoutes);
 app.use('/api', apiRoutes);
