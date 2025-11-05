@@ -3,8 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+// Add smooth scrolling and modern font loading
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <div className="font-sans">
+      <App />
+    </div>
   </StrictMode>,
 )

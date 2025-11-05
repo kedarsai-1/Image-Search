@@ -31,5 +31,6 @@ export async function history() {
 }
 
 export async function logout() {
-  return fetch(`${API}/auth/logout`, { credentials: 'include' });
+  const response = await fetch(`${API}/auth/logout`, { credentials: 'include' });
+  return response.json();
 }
